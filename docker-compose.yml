@@ -1,0 +1,32 @@
+version: '2'
+services:
+  db:
+    image: mysql:5.7
+    container_name: mysql_host
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: couroearte
+      MYSQL_USER: devuser
+      MYSQL_PASSWORD: devpass
+    volumes:
+      - ./db-dump/:/docker-entrypoint-initdb.d
+      - ./data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  webserver:
+    image: marlonjferri/phpdev74
+    container_name: php_webserver
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+  jenkins:
+    image: jenkins/jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
